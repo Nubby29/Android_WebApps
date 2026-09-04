@@ -2,52 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0b0d12" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <title>AniZone — Anime Streaming</title>
 <style>
   /* =========================================================
      REUSABLE DESIGN TOKENS
-     These tokens are the reusable "design assets" that
-     any anime theme can override without changing components.
      ========================================================= */
   :root {
-    /* Spacing scale */
     --space-1: 4px;
     --space-2: 8px;
     --space-3: 12px;
     --space-4: 16px;
-    --space-5: 24px;
-    --space-6: 32px;
-    --space-7: 48px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
 
-    /* Radius scale */
-    --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 22px;
     --radius-pill: 999px;
 
-    /* Type scale */
     --font-display: "Bebas Neue", "Impact", system-ui, sans-serif;
     --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --text-xs: 12px;
-    --text-sm: 14px;
-    --text-md: 16px;
-    --text-lg: 20px;
-    --text-xl: 28px;
-    --text-2xl: 40px;
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-md: 15px;
+    --text-lg: 18px;
+    --text-xl: 24px;
+    --text-2xl: 32px;
 
-    /* Motion */
     --ease: cubic-bezier(.22,.61,.36,1);
     --dur-fast: 150ms;
-    --dur-med: 300ms;
+    --dur-med: 280ms;
 
-    /* Component base (theme overrides) */
     --bg: #0b0d12;
     --bg-elev: #141821;
     --bg-card: #1b2030;
     --surface-line: rgba(255,255,255,0.08);
-    --text: #e8ecf5;
+    --text: #f2f4fa;
     --text-muted: #9aa3b8;
+    --scrim: rgba(0,0,0,0.6);
 
     --primary: #ff4d6d;
     --primary-ink: #0b0d12;
@@ -55,127 +52,108 @@
 
     --grad-hero: linear-gradient(135deg, #ff4d6d 0%, #7c5cff 100%);
     --grad-card: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0));
-    --shadow-card: 0 10px 30px rgba(0,0,0,0.35);
-    --glow: 0 0 0 3px rgba(124, 92, 255, 0.35);
+    --shadow-card: 0 10px 30px rgba(0,0,0,0.4);
+    --shadow-app: 0 -8px 24px rgba(0,0,0,0.5);
+    --glow: 0 0 0 3px rgba(124, 92, 255, 0.4);
 
-    /* Reusable background pattern slot — themes supply a gradient */
-    --pattern-a: radial-gradient(800px 400px at 10% -10%, rgba(255,77,109,0.25), transparent 60%);
-    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(124,92,255,0.25), transparent 60%);
-
-    /* Decorative motif */
+    --pattern-a: radial-gradient(700px 360px at 0% 0%, rgba(255,77,109,0.25), transparent 60%);
+    --pattern-b: radial-gradient(600px 320px at 100% 0%, rgba(124,92,255,0.20), transparent 60%);
     --motif: none;
+
+    /* Mobile metrics */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --tab-h: 64px;
+    --mini-h: 64px;
+    --touch: 44px;
   }
 
-  /* ============== THEME PACKS (per-anime assets) ============== */
-  /* Demon Slayer — crimson + black + gold */
-  [data-theme="demonslayer"] {
-    --primary: #e63946;
-    --accent: #f6c453;
-    --grad-hero: linear-gradient(135deg, #e63946 0%, #1a0a0a 100%);
-    --grad-card: linear-gradient(180deg, rgba(246,196,83,0.10), rgba(0,0,0,0));
-    --pattern-a: radial-gradient(700px 380px at 0% 0%, rgba(230,57,70,0.35), transparent 60%);
-    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(246,196,83,0.18), transparent 60%);
-    --motif:
-      repeating-linear-gradient(45deg, rgba(246,196,83,0.05) 0 2px, transparent 2px 14px);
-  }
-
-  /* Jujutsu Kaisen — indigo + violet + cyan */
+  /* ============== THEME PACKS ============== */
   [data-theme="jujutsu"] {
-    --primary: #7c5cff;
-    --accent: #22d3ee;
+    --primary: #7c5cff; --accent: #22d3ee;
     --grad-hero: linear-gradient(135deg, #7c5cff 0%, #22d3ee 100%);
-    --grad-card: linear-gradient(180deg, rgba(34,211,238,0.10), rgba(0,0,0,0));
-    --pattern-a: radial-gradient(700px 380px at 0% 0%, rgba(124,92,255,0.35), transparent 60%);
-    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(34,211,238,0.25), transparent 60%);
-    --motif:
-      radial-gradient(circle at 1px 1px, rgba(34,211,238,0.12) 1px, transparent 1.5px) 0 0/22px 22px;
+    --pattern-a: radial-gradient(700px 360px at 0% 0%, rgba(124,92,255,0.35), transparent 60%);
+    --pattern-b: radial-gradient(600px 320px at 100% 0%, rgba(34,211,238,0.22), transparent 60%);
   }
-
-  /* One Piece — warm sunset + ocean */
+  [data-theme="demonslayer"] {
+    --primary: #e63946; --accent: #f6c453;
+    --grad-hero: linear-gradient(135deg, #e63946 0%, #1a0a0a 100%);
+    --pattern-a: radial-gradient(700px 360px at 0% 0%, rgba(230,57,70,0.35), transparent 60%);
+    --pattern-b: radial-gradient(600px 320px at 100% 0%, rgba(246,196,83,0.18), transparent 60%);
+  }
   [data-theme="onepiece"] {
-    --primary: #ff7e3c;
-    --accent: #2ec4b6;
+    --primary: #ff7e3c; --accent: #2ec4b6;
     --grad-hero: linear-gradient(135deg, #ff7e3c 0%, #2ec4b6 100%);
-    --grad-card: linear-gradient(180deg, rgba(255,126,60,0.10), rgba(0,0,0,0));
-    --pattern-a: radial-gradient(700px 380px at 0% 0%, rgba(255,126,60,0.35), transparent 60%);
-    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(46,196,182,0.30), transparent 60%);
-    --motif:
-      repeating-linear-gradient(0deg, rgba(46,196,182,0.07) 0 1px, transparent 1px 18px);
+    --pattern-a: radial-gradient(700px 360px at 0% 0%, rgba(255,126,60,0.35), transparent 60%);
+    --pattern-b: radial-gradient(600px 320px at 100% 0%, rgba(46,196,182,0.30), transparent 60%);
   }
-
-  /* Spy x Family — pastel pink + cream */
   [data-theme="spyfamily"] {
-    --bg: #0f0a14;
-    --bg-elev: #1a1322;
-    --bg-card: #221830;
-    --primary: #ff8fb1;
-    --accent: #ffd166;
+    --bg: #0f0a14; --bg-elev: #1a1322; --bg-card: #221830;
+    --primary: #ff8fb1; --accent: #ffd166;
     --grad-hero: linear-gradient(135deg, #ff8fb1 0%, #ffd166 100%);
-    --grad-card: linear-gradient(180deg, rgba(255,209,102,0.10), rgba(0,0,0,0));
-    --pattern-a: radial-gradient(700px 380px at 0% 0%, rgba(255,143,177,0.35), transparent 60%);
-    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(255,209,102,0.25), transparent 60%);
-    --motif:
-      radial-gradient(circle at 1px 1px, rgba(255,143,177,0.10) 1px, transparent 1.5px) 0 0/18px 18px;
+    --pattern-a: radial-gradient(700px 360px at 0% 0%, rgba(255,143,177,0.35), transparent 60%);
+    --pattern-b: radial-gradient(600px 320px at 100% 0%, rgba(255,209,102,0.25), transparent 60%);
   }
-
-  /* Chainsaw Man — gritty red + black */
   [data-theme="chainsaw"] {
-    --primary: #ff2d2d;
-    --accent: #ffffff;
+    --primary: #ff2d2d; --accent: #ffffff;
     --grad-hero: linear-gradient(135deg, #ff2d2d 0%, #0b0d12 100%);
-    --grad-card: linear-gradient(180deg, rgba(255,45,45,0.10), rgba(0,0,0,0));
-    --pattern-a: radial-gradient(700px 380px at 0% 0%, rgba(255,45,45,0.30), transparent 60%);
-    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(255,255,255,0.10), transparent 60%);
-    --motif:
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 10px);
+    --pattern-a: radial-gradient(700px 360px at 0% 0%, rgba(255,45,45,0.30), transparent 60%);
+    --pattern-b: radial-gradient(600px 320px at 100% 0%, rgba(255,255,255,0.10), transparent 60%);
   }
-
-  /* Frieren — twilight purple + gold */
   [data-theme="frieren"] {
-    --primary: #9b5de5;
-    --accent: #f6c453;
+    --primary: #9b5de5; --accent: #f6c453;
     --grad-hero: linear-gradient(135deg, #4a1d6e 0%, #f6c453 100%);
-    --grad-card: linear-gradient(180deg, rgba(155,93,229,0.10), rgba(0,0,0,0));
-    --pattern-a: radial-gradient(700px 380px at 0% 0%, rgba(155,93,229,0.35), transparent 60%);
-    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(246,196,83,0.20), transparent 60%);
-    --motif:
-      radial-gradient(circle at 1px 1px, rgba(246,196,83,0.12) 1px, transparent 1.5px) 0 0/20px 20px;
+    --pattern-a: radial-gradient(700px 360px at 0% 0%, rgba(155,93,229,0.35), transparent 60%);
+    --pattern-b: radial-gradient(600px 320px at 100% 0%, rgba(246,196,83,0.20), transparent 60%);
   }
 
   /* ===================== BASE ===================== */
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; }
   body {
     font-family: var(--font-body);
     color: var(--text);
     background: var(--bg);
     min-height: 100vh;
-    line-height: 1.5;
-    transition: background var(--dur-med) var(--ease), color var(--dur-med) var(--ease);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: contain;
   }
   a { color: inherit; text-decoration: none; }
   button { font: inherit; cursor: pointer; }
 
-  /* ============== LAYOUT ============== */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ============== APP SHELL ============== */
   .app {
     min-height: 100vh;
-    background-image: var(--pattern-a), var(--pattern-b), var(--motif);
+    background-image: var(--pattern-a), var(--pattern-b);
+    background-attachment: fixed;
   }
-  @media (min-width: 861px) { .app { background-attachment: fixed; } }
 
-  /* NAVBAR (reusable) */
-  .nav {
-    display: flex; align-items: center; gap: var(--space-5);
-    padding: var(--space-4) var(--space-6);
-    border-bottom: 1px solid var(--surface-line);
-    backdrop-filter: blur(10px);
-    position: sticky; top: 0; z-index: 50;
-    background: color-mix(in oklab, var(--bg) 70%, transparent);
+  .screen {
+    max-width: 480px;
+    margin: 0 auto;
+    padding:
+      calc(var(--safe-top) + var(--space-3))
+      var(--space-4)
+      calc(var(--tab-h) + var(--mini-h) + var(--safe-bottom) + var(--space-5));
+    min-height: 100vh;
   }
-  .nav-inner {
-    display: flex; align-items: center; gap: var(--space-5);
-    width: 100%;
-    max-width: 1400px; margin: 0 auto;
+
+  /* ============== APP BAR ============== */
+  .appbar {
+    position: sticky;
+    top: var(--safe-top);
+    z-index: 30;
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3) 0 var(--space-3);
+    margin: calc(var(--space-3) * -1) 0 var(--space-4) 0;
+    background: linear-gradient(180deg, var(--bg) 60%, transparent);
   }
   .brand {
     font-family: var(--font-display);
@@ -184,49 +162,54 @@
     background: var(--grad-hero);
     -webkit-background-clip: text; background-clip: text;
     color: transparent;
+    flex: 1;
   }
-  .nav-links { display: flex; gap: var(--space-5); flex: 1; }
-  .nav-link {
-    color: var(--text-muted);
-    font-size: var(--text-sm);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-pill);
-    transition: color var(--dur-fast), background var(--dur-fast);
-  }
-  .nav-link:hover, .nav-link[aria-current="page"] {
+  .icon-btn {
+    width: var(--touch); height: var(--touch);
+    border-radius: 50%;
+    border: 1px solid var(--surface-line);
+    background: var(--bg-elev);
     color: var(--text);
-    background: var(--bg-card);
+    display: inline-flex; align-items: center; justify-content: center;
   }
+  .icon-btn:active { transform: scale(0.96); }
+  .icon-btn svg { width: 20px; height: 20px; }
 
-  /* THEME SWITCHER (reusable) */
-  .theme-switcher {
-    display: flex; gap: var(--space-2); align-items: center;
+  /* Theme switcher → icon-button popup */
+  .theme-menu { position: relative; }
+  .theme-pop {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    background: var(--bg-elev);
+    border: 1px solid var(--surface-line);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: var(--space-2);
+    box-shadow: var(--shadow-card);
+    z-index: 40;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity var(--dur-fast), transform var(--dur-fast);
+  }
+  .theme-menu.is-open .theme-pop {
+    opacity: 1; pointer-events: auto; transform: translateY(0);
   }
   .swatch {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 36px; height: 36px;
+    border-radius: 50%;
     border: 2px solid var(--surface-line);
     background: var(--grad-hero);
     cursor: pointer;
     transition: transform var(--dur-fast), box-shadow var(--dur-fast);
+    padding: 0;
   }
-  .swatch:hover { transform: scale(1.1); }
+  .swatch:active { transform: scale(0.94); }
   .swatch[aria-pressed="true"] { box-shadow: var(--glow); }
-  .swatch:focus-visible,
-  .card:focus-visible,
-  .btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
 
-  /* HERO (reusable) */
-  .hero {
-    display: grid; grid-template-columns: 1.4fr 1fr;
-    gap: var(--space-6);
-    padding: var(--space-7) var(--space-6);
-    align-items: stretch;
-  }
-  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
-
+  /* ============== HERO ============== */
   .hero-card {
     position: relative;
     border-radius: var(--radius-lg);
@@ -234,9 +217,9 @@
     background: var(--bg-elev);
     border: 1px solid var(--surface-line);
     box-shadow: var(--shadow-card);
-    min-height: 380px;
+    aspect-ratio: 16/21;
     display: flex; flex-direction: column; justify-content: flex-end;
-    padding: var(--space-6);
+    padding: var(--space-5);
   }
   .hero-art {
     position: absolute; inset: 0;
@@ -247,111 +230,148 @@
     width: 100%; height: 100%;
     object-fit: cover;
     display: block;
-    filter: saturate(1.1);
+    filter: saturate(1.05);
+    opacity: 0;
+    transition: opacity var(--dur-med);
   }
+  .hero-art img.is-loaded { opacity: 1; }
   .hero-art::after {
     content: "";
     position: absolute; inset: 0;
     background:
-      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.10), transparent 40%),
-      linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.85));
+      linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.85) 100%);
   }
   .hero-eyebrow {
     position: relative;
     font-size: var(--text-xs);
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2.5px;
     color: var(--accent);
+    font-weight: 700;
   }
   .hero-title {
     position: relative;
     font-family: var(--font-display);
-    font-size: clamp(36px, 6vw, 64px);
-    line-height: 1;
-    margin: var(--space-2) 0 var(--space-3);
+    font-size: clamp(36px, 11vw, 56px);
+    line-height: 0.95;
+    margin: var(--space-2) 0 var(--space-2);
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
   }
   .hero-meta {
     position: relative;
     color: var(--text);
-    opacity: 0.9;
-    font-size: var(--text-sm);
-    display: flex; gap: var(--space-3); flex-wrap: wrap;
+    font-size: var(--text-xs);
+    display: flex; gap: var(--space-2); flex-wrap: wrap;
   }
   .hero-actions {
     position: relative;
-    display: flex; gap: var(--space-3); margin-top: var(--space-5);
+    display: grid; grid-template-columns: 1fr auto;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
   }
 
-  /* SIDE PANEL (reusable) */
-  .side-card {
-    background: var(--bg-elev);
-    border: 1px solid var(--surface-line);
-    border-radius: var(--radius-lg);
-    padding: var(--space-5);
-    display: flex; flex-direction: column; gap: var(--space-4);
-  }
-  .side-card h3 {
-    margin: 0; font-size: var(--text-lg);
-  }
-
-  /* BUTTONS (reusable) */
+  /* ============== BUTTONS ============== */
   .btn {
-    --bg-btn: var(--primary);
-    --fg-btn: var(--primary-ink);
-    background: var(--bg-btn);
-    color: var(--fg-btn);
+    min-height: var(--touch);
+    background: var(--primary);
+    color: var(--primary-ink);
     border: 1px solid transparent;
-    padding: var(--space-3) var(--space-5);
+    padding: 0 var(--space-5);
     border-radius: var(--radius-pill);
-    font-weight: 600;
+    font-weight: 700;
     font-size: var(--text-sm);
-    display: inline-flex; align-items: center; gap: var(--space-2);
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: var(--space-2);
     transition: transform var(--dur-fast), filter var(--dur-fast);
   }
-  .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .btn:active { transform: scale(0.97); }
   .btn--ghost {
-    --bg-btn: transparent;
-    --fg-btn: var(--text);
+    background: rgba(255,255,255,0.12);
+    color: var(--text);
     border-color: var(--surface-line);
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
+  }
+  .btn--icon {
+    width: var(--touch); height: var(--touch);
+    padding: 0;
   }
 
-  /* SECTION HEADING (reusable) */
-  .section {
-    padding: var(--space-6);
+  /* ============== CHIPS (filters) ============== */
+  .chips {
+    display: flex; gap: var(--space-2);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: var(--space-5) calc(var(--space-4) * -1) var(--space-3);
+    padding: 0 var(--space-4) var(--space-2);
+    -webkit-overflow-scrolling: touch;
   }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--bg-elev);
+    color: var(--text-muted);
+    border: 1px solid var(--surface-line);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+    scroll-snap-align: start;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  /* ============== SECTION HEADING ============== */
+  .section { margin-top: var(--space-6); }
   .section-head {
     display: flex; align-items: end; justify-content: space-between;
-    margin-bottom: var(--space-5);
+    margin: 0 0 var(--space-3);
+    padding: 0 var(--space-1);
   }
   .section-title {
     font-family: var(--font-display);
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     letter-spacing: 1px;
   }
-  .section-sub { color: var(--text-muted); font-size: var(--text-sm); }
+  .section-sub { color: var(--text-muted); font-size: var(--text-xs); }
+  .see-all { color: var(--text-muted); font-size: var(--text-xs); font-weight: 600; }
 
-  /* ANIME CARD (reusable) */
-  .grid {
+  /* ============== HORIZONTAL RAIL (mobile pattern) ============== */
+  .rail {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: var(--space-5);
+    grid-auto-flow: column;
+    grid-auto-columns: 42%;
+    gap: var(--space-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 0 calc(var(--space-4) * -1);
+    padding: 0 var(--space-4) var(--space-3);
+    -webkit-overflow-scrolling: touch;
   }
+  .rail::-webkit-scrollbar { display: none; }
+  @media (min-width: 480px) {
+    .rail { grid-auto-columns: 32%; }
+  }
+
   .card {
     position: relative;
     border-radius: var(--radius-md);
     overflow: hidden;
-    background: transparent;
+    background: var(--bg-card);
     border: 1px solid var(--surface-line);
-    transition: transform var(--dur-med) var(--ease), box-shadow var(--dur-med);
     cursor: pointer;
     text-align: left;
     color: inherit;
     font: inherit;
     width: 100%;
     padding: 0;
+    scroll-snap-align: start;
   }
-  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
+  .card:active { transform: scale(0.98); }
   .card-art {
     aspect-ratio: 3/4;
     background: var(--grad-hero);
@@ -372,62 +392,48 @@
     object-fit: cover;
     display: block;
     opacity: 0;
-    transition: opacity var(--dur-med), transform var(--dur-med) var(--ease);
+    transition: opacity var(--dur-med);
     position: relative; z-index: 1;
   }
   .card-art.is-loaded img { opacity: 1; }
-  .card:hover .card-art img { transform: scale(1.05); }
   .card-art::after {
     content: "";
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7));
+    background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.8));
     pointer-events: none;
     z-index: 2;
   }
-  @keyframes shimmer { to { transform: translateX(100%); } }
   .card-rank {
-    position: absolute; top: var(--space-3); left: var(--space-3);
-    background: var(--bg);
+    position: absolute; top: var(--space-2); left: var(--space-2);
+    background: rgba(0,0,0,0.55);
     color: var(--text);
     border: 1px solid var(--surface-line);
     padding: 2px 8px;
     border-radius: var(--radius-pill);
     font-size: var(--text-xs);
     font-weight: 700;
+    z-index: 3;
   }
-  .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
+  .card-body { padding: var(--space-2) var(--space-3) var(--space-3); }
   .card-title {
-    font-size: var(--text-md);
+    font-size: var(--text-sm);
     font-weight: 700;
-    margin: 0 0 var(--space-1);
+    margin: 0 0 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .card-meta { color: var(--text-muted); font-size: var(--text-xs); display: flex; gap: var(--space-2); }
+  .card-meta { color: var(--text-muted); font-size: var(--text-xs); display: flex; gap: 4px; }
 
-  /* BADGE (reusable) */
-  .badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 2px 10px;
-    border-radius: var(--radius-pill);
-    background: var(--grad-card);
-    border: 1px solid var(--surface-line);
-    font-size: var(--text-xs);
-    color: var(--text);
-  }
-  .badge .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--primary);
-  }
+  @keyframes shimmer { to { transform: translateX(100%); } }
 
-  /* EPISODE LIST (reusable) */
-  .episodes {
-    display: flex; flex-direction: column; gap: var(--space-2);
-  }
+  /* ============== EPISODE LIST (compact) ============== */
+  .episodes { display: flex; flex-direction: column; gap: var(--space-2); }
   .episode {
     display: grid;
-    grid-template-columns: 48px 1fr auto;
+    grid-template-columns: 44px 1fr auto;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3);
+    min-height: var(--touch);
     border-radius: var(--radius-md);
     background: var(--bg-card);
     border: 1px solid var(--surface-line);
@@ -441,141 +447,281 @@
   .episode-title { font-size: var(--text-sm); font-weight: 600; }
   .episode-time { color: var(--text-muted); font-size: var(--text-xs); }
 
-  /* FOOTER */
-  .footer {
-    padding: var(--space-6);
+  /* ============== MINI PLAYER ============== */
+  .mini-player {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: calc(var(--tab-h) + var(--safe-bottom));
+    z-index: 35;
+    padding: 0 var(--space-3);
+    pointer-events: none;
+  }
+  .mini-card {
+    max-width: 480px;
+    margin: 0 auto;
+    pointer-events: auto;
+    display: grid;
+    grid-template-columns: 40px 1fr auto auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: color-mix(in oklab, var(--bg-elev) 90%, transparent);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--surface-line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-card);
+  }
+  .mini-art {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--grad-hero);
+    overflow: hidden;
+  }
+  .mini-art img { width: 100%; height: 100%; object-fit: cover; }
+  .mini-info { min-width: 0; }
+  .mini-title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mini-sub { font-size: var(--text-xs); color: var(--text-muted); }
+
+  /* ============== TAB BAR ============== */
+  .tabbar {
+    position: fixed;
+    left: 0; right: 0;
+    bottom: 0;
+    z-index: 40;
+    padding-bottom: var(--safe-bottom);
+    background: color-mix(in oklab, var(--bg-elev) 92%, transparent);
+    backdrop-filter: blur(20px);
     border-top: 1px solid var(--surface-line);
+  }
+  .tabbar-inner {
+    max-width: 480px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    height: var(--tab-h);
+  }
+  .tab {
+    display: inline-flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
     color: var(--text-muted);
-    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    position: relative;
+  }
+  .tab svg { width: 22px; height: 22px; }
+  .tab[aria-current="page"] { color: var(--text); }
+  .tab[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    width: 24px; height: 3px;
+    border-radius: 2px;
+    background: var(--primary);
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--grad-card);
+    border: 1px solid var(--surface-line);
     font-size: var(--text-xs);
+    color: var(--text);
+  }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+
+  /* Safe area filler when no mini-player */
+  .app::after {
+    content: "";
+    display: block;
+    height: calc(var(--safe-bottom));
   }
 </style>
 </head>
 <body data-theme="jujutsu">
   <div class="app">
+    <div class="screen">
 
-    <!-- NAVBAR -->
-    <nav class="nav" aria-label="Primary">
-      <div class="nav-inner">
+      <!-- APP BAR -->
+      <header class="appbar">
         <div class="brand">ANIZONE</div>
-        <div class="nav-links">
-          <a class="nav-link" href="#" aria-current="page">Home</a>
-          <a class="nav-link" href="#">Series</a>
-          <a class="nav-link" href="#">Movies</a>
-          <a class="nav-link" href="#">Schedule</a>
-          <a class="nav-link" href="#">My List</a>
+        <button class="icon-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
+        <div class="theme-menu" id="theme-menu">
+          <button class="icon-btn" id="theme-btn" aria-label="Theme" aria-expanded="false" aria-haspopup="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+          </button>
+          <div class="theme-pop" role="group" aria-label="Themes">
+            <button class="swatch" data-set="jujutsu"     aria-label="Jujutsu Kaisen"></button>
+            <button class="swatch" data-set="demonslayer" aria-label="Demon Slayer"></button>
+            <button class="swatch" data-set="onepiece"    aria-label="One Piece"></button>
+            <button class="swatch" data-set="spyfamily"   aria-label="Spy x Family"></button>
+            <button class="swatch" data-set="chainsaw"    aria-label="Chainsaw Man"></button>
+            <button class="swatch" data-set="frieren"     aria-label="Frieren"></button>
+          </div>
         </div>
-        <div class="theme-switcher" role="group" aria-label="Theme">
-          <button class="swatch" data-set="jujutsu"      aria-label="Jujutsu Kaisen"></button>
-          <button class="swatch" data-set="demonslayer"  aria-label="Demon Slayer"></button>
-          <button class="swatch" data-set="onepiece"     aria-label="One Piece"></button>
-          <button class="swatch" data-set="spyfamily"    aria-label="Spy x Family"></button>
-          <button class="swatch" data-set="chainsaw"     aria-label="Chainsaw Man"></button>
-          <button class="swatch" data-set="frieren"      aria-label="Frieren"></button>
-        </div>
-      </div>
-    </nav>
+      </header>
 
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-card" id="hero-card">
+      <!-- HERO -->
+      <section class="hero-card" id="hero-card">
         <div class="hero-art" id="hero-art" aria-hidden="true"></div>
         <div class="hero-eyebrow" id="hero-eyebrow">FEATURED</div>
         <h1 class="hero-title" id="hero-title">Loading…</h1>
         <div class="hero-meta" id="hero-meta"></div>
         <div class="hero-actions">
           <button class="btn">▶ Watch Now</button>
-          <button class="btn btn--ghost">+ My List</button>
+          <button class="btn btn--ghost btn--icon" aria-label="Add to list">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
         </div>
-      </div>
+      </section>
 
-      <aside class="side-card" aria-labelledby="episodes-heading">
-        <h3 id="episodes-heading">Latest Episodes</h3>
-        <div class="episodes" id="episodes">
-          <noscript>
-            <p style="color:var(--text-muted);font-size:var(--text-sm)">
-              JavaScript is required to load episode data.
-            </p>
-          </noscript>
-        </div>
-      </aside>
-    </section>
+      <!-- FILTER CHIPS -->
+      <nav class="chips" aria-label="Genres" id="chips">
+        <button class="chip" aria-pressed="true">All</button>
+        <button class="chip">Action</button>
+        <button class="chip">Adventure</button>
+        <button class="chip">Comedy</button>
+        <button class="chip">Fantasy</button>
+        <button class="chip">Supernatural</button>
+      </nav>
 
-    <noscript>
-      <p style="padding:var(--space-6);color:var(--text-muted)">
-        AniZone requires JavaScript to fetch anime data and images.
-      </p>
-    </noscript>
+      <!-- TRENDING RAIL -->
+      <section class="section">
+        <header class="section-head">
+          <div>
+            <div class="section-title">Trending Now</div>
+            <div class="section-sub">Updated daily</div>
+          </div>
+          <a href="#" class="see-all">See all</a>
+        </header>
+        <div class="rail" id="rail-trending" aria-live="polite" aria-busy="true"></div>
+      </section>
 
-    <!-- TRENDING -->
-    <section class="section">
-      <header class="section-head">
-        <div>
-          <div class="section-title">Trending Now</div>
-          <div class="section-sub">Updated daily based on viewer activity</div>
-        </div>
-        <a class="nav-link" href="#">View all →</a>
-      </header>
+      <!-- NEW RELEASES RAIL -->
+      <section class="section">
+        <header class="section-head">
+          <div>
+            <div class="section-title">New Releases</div>
+            <div class="section-sub">Fresh this week</div>
+          </div>
+          <a href="#" class="see-all">See all</a>
+        </header>
+        <div class="rail" id="rail-new" aria-live="polite" aria-busy="true"></div>
+      </section>
 
-      <div class="grid" id="grid" aria-live="polite" aria-busy="true">
-        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
-        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
-        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
-        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
-        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
-        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      AniZone • Single-file prototype • Switch themes via the swatches in the nav
-    </footer>
+      <!-- LATEST EPISODES -->
+      <section class="section">
+        <header class="section-head">
+          <div>
+            <div class="section-title">Latest Episodes</div>
+            <div class="section-sub" id="latest-sub">Loading…</div>
+          </div>
+        </header>
+        <div class="episodes" id="episodes"></div>
+      </section>
+    </div>
   </div>
 
+  <!-- MINI PLAYER -->
+  <div class="mini-player" id="mini-player" hidden>
+    <div class="mini-card" role="region" aria-label="Now playing">
+      <div class="mini-art" id="mini-art"></div>
+      <div class="mini-info">
+        <div class="mini-title" id="mini-title"></div>
+        <div class="mini-sub" id="mini-sub"></div>
+      </div>
+      <button class="btn btn--icon btn--ghost" aria-label="Play">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="btn btn--icon btn--ghost" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M6 5l8 7-8 7zM17 5h2v14h-2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <nav class="tabbar" aria-label="Primary">
+    <div class="tabbar-inner">
+      <button class="tab" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8v9a2 2 0 0 1-2 2h-4v-7H10v7H6a2 2 0 0 1-2-2z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 10h18M7 14h4"/></svg>
+        <span>Series</span>
+      </button>
+      <button class="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span>Schedule</span>
+      </button>
+      <button class="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span>My List</span>
+      </button>
+      <button class="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <span>Profile</span>
+      </button>
+    </div>
+  </nav>
+
+<noscript>
+  <p style="padding:var(--space-5);color:var(--text-muted)">
+    AniZone requires JavaScript to fetch anime data.
+  </p>
+</noscript>
+
 <script>
-  /* =========================================================
-     DATA
-     Each entry links a Wikipedia page (its `originalimage` and
-     `thumbnail` are pulled; `originalimage` is the lead image,
-     which for anime articles is the official key visual).
-     `episodes` is illustrative metadata for the side panel.
-     ========================================================= */
+  /* ============== DATA ============== */
   const ANIME = [
-    { title: "Jujutsu Kaisen",                  theme: "jujutsu",     tag: "Supernatural", episodes: [
-      { n: 12, t: "To You, Someday",       d: "Sep 14 • 24m" },
-      { n: 11, t: "The Shibuya Incident",  d: "Sep 07 • 24m" },
-      { n: 10, t: "Black Flash",           d: "Aug 31 • 24m" }
+    { title: "Jujutsu Kaisen",                  theme: "jujutsu",     tag: "Supernatural", rank: 1, episodes: [
+      { n: 12, t: "To You, Someday",      d: "Sep 14 • 24m" },
+      { n: 11, t: "The Shibuya Incident", d: "Sep 07 • 24m" },
+      { n: 10, t: "Black Flash",          d: "Aug 31 • 24m" }
     ]},
-    { title: "Demon Slayer: Kimetsu no Yaiba",  theme: "demonslayer", tag: "Action",       episodes: [
-      { n: 11, t: "A Connected Bond",      d: "Jun 30 • 24m" },
-      { n: 10, t: "Never Give Up",         d: "Jun 23 • 24m" },
-      { n:  9, t: "Butterfly Estate",      d: "Jun 16 • 24m" }
+    { title: "Demon Slayer: Kimetsu no Yaiba",  theme: "demonslayer", tag: "Action",       rank: 2, episodes: [
+      { n: 11, t: "A Connected Bond",     d: "Jun 30 • 24m" },
+      { n: 10, t: "Never Give Up",        d: "Jun 23 • 24m" },
+      { n:  9, t: "Butterfly Estate",     d: "Jun 16 • 24m" }
     ]},
-    { title: "One Piece",                       theme: "onepiece",    tag: "Adventure",    episodes: [
+    { title: "One Piece",                       theme: "onepiece",    tag: "Adventure",    rank: 3, episodes: [
       { n: 1122, t: "A Break in the Storm", d: "Sep 01 • 24m" },
-      { n: 1121, t: "Luffy vs. Admiral",    d: "Aug 25 • 24m" },
-      { n: 1120, t: "Egghead Arc",          d: "Aug 18 • 24m" }
+      { n: 1121, t: "Luffy vs. Admiral",  d: "Aug 25 • 24m" },
+      { n: 1120, t: "Egghead Arc",        d: "Aug 18 • 24m" }
     ]},
-    { title: "Spy × Family",                    theme: "spyfamily",   tag: "Comedy",       episodes: [
-      { n: 25, t: "Mission 75",            d: "Jun 24 • 24m" },
-      { n: 24, t: "Mission 74",            d: "Jun 17 • 24m" },
-      { n: 23, t: "Mission 73",            d: "Jun 10 • 24m" }
+    { title: "Spy × Family",                    theme: "spyfamily",   tag: "Comedy",       rank: 4, episodes: [
+      { n: 25, t: "Mission 75",           d: "Jun 24 • 24m" },
+      { n: 24, t: "Mission 74",           d: "Jun 17 • 24m" },
+      { n: 23, t: "Mission 73",           d: "Jun 10 • 24m" }
     ]},
-    { title: "Chainsaw Man",                    theme: "chainsaw",    tag: "Action",       episodes: [
-      { n: 12, t: "Katana vs. Chainsaw",   d: "Dec 28 • 24m" },
+    { title: "Chainsaw Man",                    theme: "chainsaw",    tag: "Action",       rank: 5, episodes: [
+      { n: 12, t: "Katana vs. Chainsaw",  d: "Dec 28 • 24m" },
       { n: 11, t: "Go Get 'Em, Chainsaw Man", d: "Dec 21 • 24m" },
-      { n: 10, t: "Humanity's Savior",     d: "Dec 14 • 24m" }
+      { n: 10, t: "Humanity's Savior",    d: "Dec 14 • 24m" }
     ]},
-    { title: "Frieren: Beyond Journey's End",  theme: "frieren",     tag: "Fantasy",      episodes: [
-      { n: 28, t: "The Journey to Ende",   d: "Mar 22 • 24m" },
-      { n: 27, t: "A Frieren Reunion",     d: "Mar 15 • 24m" },
-      { n: 26, t: "The Exam's End",        d: "Mar 08 • 24m" }
+    { title: "Frieren: Beyond Journey's End",  theme: "frieren",     tag: "Fantasy",      rank: 6, episodes: [
+      { n: 28, t: "The Journey to Ende",  d: "Mar 22 • 24m" },
+      { n: 27, t: "A Frieren Reunion",    d: "Mar 15 • 24m" },
+      { n: 26, t: "The Exam's End",       d: "Mar 08 • 24m" }
     ]}
   ];
 
-  /* ---- Theme switcher ---- */
-  const swatches = document.querySelectorAll('.swatch');
+  /* ============== THEME ============== */
   const root = document.body;
+  const themeMenu = document.getElementById('theme-menu');
+  const themeBtn = document.getElementById('theme-btn');
+  const swatches = document.querySelectorAll('.swatch');
 
   function setTheme(theme) {
     root.setAttribute('data-theme', theme);
@@ -583,11 +729,24 @@
   }
   setTheme('jujutsu');
 
-  swatches.forEach(btn => {
-    btn.addEventListener('click', () => setTheme(btn.dataset.set));
+  themeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = themeMenu.classList.toggle('is-open');
+    themeBtn.setAttribute('aria-expanded', String(open));
   });
+  document.addEventListener('click', e => {
+    if (!themeMenu.contains(e.target)) {
+      themeMenu.classList.remove('is-open');
+      themeBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+  swatches.forEach(btn => btn.addEventListener('click', () => {
+    setTheme(btn.dataset.set);
+    themeMenu.classList.remove('is-open');
+    themeBtn.setAttribute('aria-expanded', 'false');
+  }));
 
-  /* ---- Wikipedia fetch with stagger to avoid rate-limits ---- */
+  /* ============== DATA FETCH ============== */
   async function fetchWikiSummary(title) {
     const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
     const res = await fetch(url, { headers: { 'Api-User-Agent': 'AniZone/1.0 (https://github.com/Nubby29/Android_WebApps)' } });
@@ -600,21 +759,39 @@
     };
   }
 
-  /* Map API image to {src, w, h} using a 3:4 aspect for cards. */
-  function thumbWithDims(url) {
-    if (!url) return null;
-    return { src: url, w: 300, h: 400 };
-  }
-  function heroWithDims(url) {
-    if (!url) return null;
-    return { src: url, w: 1200, h: 800 };
+  function withDims(url, w, h) { return url ? { src: url, w, h } : null; }
+
+  /* ============== RENDERERS ============== */
+  function renderHero(item) {
+    setTheme(item.theme);
+    const art = document.getElementById('hero-art');
+    const img = withDims(item.original, 800, 1050) || withDims(item.thumb, 800, 1050);
+    if (img) {
+      art.innerHTML = `<img src="${img.src}" width="${img.w}" height="${img.h}" alt="" loading="eager" decoding="async" onload="this.classList.add('is-loaded')">`;
+    } else { art.innerHTML = ''; }
+    document.getElementById('hero-title').textContent = item.title;
+    document.getElementById('hero-eyebrow').textContent = 'FEATURED';
+    const meta = document.getElementById('hero-meta');
+    meta.innerHTML = '';
+    [
+      { html: '<span class="badge"><span class="dot"></span>Trending</span>' },
+      { text: item.tag },
+      { text: 'Lead image' }
+    ].forEach(t => {
+      const b = document.createElement('span');
+      b.className = 'badge';
+      if (t.html) b.innerHTML = t.html; else b.textContent = t.text;
+      meta.appendChild(b);
+    });
+    renderEpisodes(item);
+    showMiniPlayer(item);
   }
 
-  /* ---- Render: episodes ---- */
-  function renderEpisodes(episodes) {
+  function renderEpisodes(item) {
+    document.getElementById('latest-sub').textContent = item.title;
     const list = document.getElementById('episodes');
     list.innerHTML = '';
-    episodes.forEach(ep => {
+    item.episodes.forEach(ep => {
       const row = document.createElement('div');
       row.className = 'episode';
       row.innerHTML = `
@@ -623,53 +800,32 @@
           <div class="episode-title"></div>
           <div class="episode-time"></div>
         </div>
-        <button class="btn">Play</button>`;
+        <button class="btn btn--ghost" aria-label="Play episode ${ep.n}">Play</button>`;
       row.querySelector('.episode-title').textContent = ep.t;
       row.querySelector('.episode-time').textContent = ep.d;
+      row.querySelector('.btn').addEventListener('click', () => showMiniPlayer(item, ep));
       list.appendChild(row);
     });
   }
 
-  /* ---- Render: hero ---- */
-  function renderHero(item) {
-    setTheme(item.theme);
-    const art = document.getElementById('hero-art');
-    const img = heroWithDims(item.original) || heroWithDims(item.thumb);
-    if (img) {
-      art.innerHTML = `<img src="${img.src}" width="${img.w}" height="${img.h}" alt="">`;
-    } else {
-      art.innerHTML = '';
-    }
-    const title = document.getElementById('hero-title');
-    title.textContent = item.title;
-    document.getElementById('hero-eyebrow').textContent = 'FEATURED';
-    const meta = document.getElementById('hero-meta');
-    meta.innerHTML = '';
-    const tags = [
-      { html: '<span class="badge"><span class="dot"></span>Trending</span>' },
-      { text: item.tag },
-      { text: 'Lead image' }
-    ];
-    tags.forEach(t => {
-      const b = document.createElement('span');
-      b.className = 'badge';
-      if (t.html) b.innerHTML = t.html;
-      else b.textContent = t.text;
-      meta.appendChild(b);
-    });
-    renderEpisodes(item.episodes);
+  function showMiniPlayer(item, ep) {
+    const mp = document.getElementById('mini-player');
+    const art = document.getElementById('mini-art');
+    const img = withDims(item.thumb, 80, 80) || withDims(item.original, 80, 80);
+    art.innerHTML = img ? `<img src="${img.src}" width="40" height="40" alt="">` : '';
+    document.getElementById('mini-title').textContent = item.title;
+    document.getElementById('mini-sub').textContent = ep ? `Ep ${ep.n} • ${ep.t}` : 'Featured';
+    mp.hidden = false;
   }
 
-  /* ---- Render: card (accessible <button>) ---- */
   function renderCard(item, rank) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'card';
     btn.setAttribute('aria-label', `Feature ${item.title}`);
-
-    const img = thumbWithDims(item.thumb) || thumbWithDims(item.original);
+    const img = withDims(item.thumb, 300, 400) || withDims(item.original, 300, 400);
     btn.innerHTML = `
-      <div class="card-art" data-rank="${rank}">
+      <div class="card-art">
         ${img ? `<img src="${img.src}" width="${img.w}" height="${img.h}" alt="" loading="lazy" decoding="async">` : ''}
       </div>
       <span class="card-rank" aria-hidden="true">Top ${rank}</span>
@@ -680,44 +836,45 @@
     btn.querySelector('.card-title').textContent = item.title;
     btn.querySelector('.card-meta').innerHTML =
       `<span>${item.tag}</span><span>•</span><span>TV</span>`;
-
     if (img) {
       const realImg = btn.querySelector('img');
-      realImg.addEventListener('load', () => {
-        realImg.parentElement.classList.add('is-loaded');
-      });
-      realImg.addEventListener('error', () => {
-        realImg.parentElement.classList.add('is-loaded');
-      });
+      realImg.addEventListener('load', () => realImg.parentElement.classList.add('is-loaded'));
+      realImg.addEventListener('error', () => realImg.parentElement.classList.add('is-loaded'));
     } else {
       btn.querySelector('.card-art').classList.add('is-loaded');
     }
-
     btn.addEventListener('click', () => renderHero(item));
     return btn;
   }
 
-  /* ---- Init: staggered fetches ---- */
+  /* ============== INIT ============== */
   (async function init() {
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '';
-    grid.setAttribute('aria-busy', 'true');
+    const railT = document.getElementById('rail-trending');
+    const railN = document.getElementById('rail-new');
+    railT.setAttribute('aria-busy', 'true');
+    railN.setAttribute('aria-busy', 'true');
 
-    // Stagger requests ~150ms apart to stay friendly to Wikipedia's rate limit.
     const results = [];
     for (const a of ANIME) {
       try {
-        const info = await fetchWikiSummary(a.title);
-        results.push({ ...a, ...info });
+        results.push({ ...a, ...(await fetchWikiSummary(a.title)) });
       } catch {
         results.push({ ...a, original: '', thumb: '' });
       }
       await new Promise(r => setTimeout(r, 150));
     }
 
-    results.forEach((item, i) => grid.appendChild(renderCard(item, i + 1)));
-    grid.setAttribute('aria-busy', 'false');
-    renderHero(results[0]); // Jujutsu featured
+    // Trending: top 5 by rank
+    [...results].sort((a,b)=>a.rank-b.rank).slice(0,5)
+      .forEach((it, i) => railT.appendChild(renderCard(it, i + 1)));
+    // New releases: bottom 5 by rank (reversed order)
+    [...results].sort((a,b)=>b.rank-a.rank).slice(0,5)
+      .forEach((it, i) => railN.appendChild(renderCard(it, 6 - i)));
+
+    railT.setAttribute('aria-busy', 'false');
+    railN.setAttribute('aria-busy', 'false');
+
+    renderHero(results[0]);
   })();
 </script>
 </body>
