@@ -218,14 +218,20 @@
   .hero-art {
     position: absolute; inset: 0;
     background: var(--grad-hero);
-    opacity: 0.85;
+    overflow: hidden;
+  }
+  .hero-art img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.1);
   }
   .hero-art::after {
     content: "";
     position: absolute; inset: 0;
     background:
-      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.18), transparent 40%),
-      linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7));
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.10), transparent 40%),
+      linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.85));
   }
   .hero-eyebrow {
     position: relative;
@@ -322,12 +328,23 @@
     aspect-ratio: 3/4;
     background: var(--grad-hero);
     position: relative;
+    overflow: hidden;
   }
+  .card-art img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--dur-med) var(--ease);
+  }
+  .card:hover .card-art img { transform: scale(1.05); }
   .card-art::after {
     content: "";
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.6));
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7));
+    pointer-events: none;
   }
+  .card-art.loading img { opacity: 0; }
+  .card-art img { opacity: 1; transition: opacity var(--dur-med), transform var(--dur-med) var(--ease); }
   .card-rank {
     position: absolute; top: var(--space-3); left: var(--space-3);
     background: var(--bg);
@@ -418,16 +435,11 @@
 
     <!-- HERO -->
     <section class="hero">
-      <div class="hero-card">
-        <div class="hero-art"></div>
-        <div class="hero-eyebrow">FEATURED • SEASON 2</div>
-        <h1 class="hero-title">Sorcery<br/>Fight Awaits</h1>
-        <div class="hero-meta">
-          <span class="badge"><span class="dot"></span>Trending</span>
-          <span class="badge">Action</span>
-          <span class="badge">Supernatural</span>
-          <span class="badge">2024</span>
-        </div>
+      <div class="hero-card" id="hero-card">
+        <div class="hero-art" id="hero-art"></div>
+        <div class="hero-eyebrow" id="hero-eyebrow">FEATURED</div>
+        <h1 class="hero-title" id="hero-title">Loading…</h1>
+        <div class="hero-meta" id="hero-meta"></div>
         <div class="hero-actions">
           <button class="btn">▶ Watch Now</button>
           <button class="btn btn--ghost">+ My List</button>
@@ -475,61 +487,7 @@
         <a class="nav-link" href="#">View all →</a>
       </header>
 
-      <div class="grid">
-        <article class="card">
-          <div class="card-art"></div>
-          <span class="card-rank">#1</span>
-          <div class="card-body">
-            <h3 class="card-title">Demon Slayer</h3>
-            <div class="card-meta"><span>Action</span><span>•</span><span>TV</span></div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-art" style="--primary:#22d3ee;--accent:#7c5cff;"></div>
-          <span class="card-rank">#2</span>
-          <div class="card-body">
-            <h3 class="card-title">Jujutsu Kaisen</h3>
-            <div class="card-meta"><span>Supernatural</span><span>•</span><span>TV</span></div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-art" style="--primary:#ff7e3c;--accent:#2ec4b6;"></div>
-          <span class="card-rank">#3</span>
-          <div class="card-body">
-            <h3 class="card-title">One Piece</h3>
-            <div class="card-meta"><span>Adventure</span><span>•</span><span>TV</span></div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-art" style="--primary:#ff8fb1;--accent:#ffd166;"></div>
-          <span class="card-rank">#4</span>
-          <div class="card-body">
-            <h3 class="card-title">Spy x Family</h3>
-            <div class="card-meta"><span>Comedy</span><span>•</span><span>TV</span></div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-art" style="--primary:#ff2d2d;--accent:#ffffff;"></div>
-          <span class="card-rank">#5</span>
-          <div class="card-body">
-            <h3 class="card-title">Chainsaw Man</h3>
-            <div class="card-meta"><span>Action</span><span>•</span><span>TV</span></div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="card-art" style="--primary:#9b5de5;--accent:#f15bb5;"></div>
-          <span class="card-rank">#6</span>
-          <div class="card-body">
-            <h3 class="card-title">Frieren</h3>
-            <div class="card-meta"><span>Fantasy</span><span>•</span><span>TV</span></div>
-          </div>
-        </article>
-      </div>
+      <div class="grid" id="grid"></div>
     </section>
 
     <footer class="footer">
@@ -538,16 +496,92 @@
   </div>
 
 <script>
-  // THEME SWITCHER — swaps the data-theme attribute; all assets re-tint via tokens.
+  /* =========================================================
+     DATA — Wikipedia REST API page titles
+     /page/summary/{title} returns thumbnail + extract.
+     The "thumbnail" is the lead image from the article,
+     which for anime articles is the official key visual.
+     ========================================================= */
+  const ANIME = [
+    { title: "Demon Slayer: Kimetsu no Yaiba",          theme: "demonslayer", tag: "Action" },
+    { title: "Jujutsu Kaisen",                          theme: "jujutsu",     tag: "Supernatural" },
+    { title: "One Piece",                               theme: "onepiece",    tag: "Adventure" },
+    { title: "Spy × Family",                            theme: "spyfamily",   tag: "Comedy" },
+    { title: "Chainsaw Man",                            theme: "chainsaw",    tag: "Action" },
+    { title: "Frieren: Beyond Journey's End",          theme: "spyfamily",   tag: "Fantasy" }
+  ];
+
+  // THEME SWITCHER
   const swatches = document.querySelectorAll('.swatch');
   const root = document.body;
   swatches.forEach(btn => {
     btn.addEventListener('click', () => {
-      const theme = btn.dataset.set;
-      root.setAttribute('data-theme', theme);
+      root.setAttribute('data-theme', btn.dataset.set);
       swatches.forEach(s => s.setAttribute('aria-pressed', String(s === btn)));
     });
   });
+
+  /* Fetch a Wikipedia summary; resolve to {title, image, extract}. */
+  async function fetchWikiSummary(title) {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+    const res = await fetch(url, { headers: { 'Api-User-Agent': 'AniZone/1.0' } });
+    if (!res.ok) throw new Error(`Wiki ${res.status}`);
+    const data = await res.json();
+    return {
+      title: data.title,
+      image: (data.originalimage && data.originalimage.source) || (data.thumbnail && data.thumbnail.source) || '',
+      extract: data.extract || ''
+    };
+  }
+
+  function setTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    swatches.forEach(s => s.setAttribute('aria-pressed', s.dataset.set === theme));
+  }
+
+  function renderHero(item) {
+    setTheme(item.theme);
+    const art = document.getElementById('hero-art');
+    art.style.background = ''; // let image show
+    art.innerHTML = item.image
+      ? `<img src="${item.image}" alt="${item.title}" loading="eager" onload="this.style.opacity=1" style="opacity:0">`
+      : '';
+    document.getElementById('hero-eyebrow').textContent = 'FEATURED';
+    document.getElementById('hero-title').innerHTML = item.title;
+    const meta = document.getElementById('hero-meta');
+    meta.innerHTML =
+      `<span class="badge"><span class="dot"></span>Trending</span>` +
+      `<span class="badge">${item.tag}</span>` +
+      `<span class="badge">Wikipedia • Official</span>`;
+  }
+
+  function renderCard(item, rank) {
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="card-art loading">
+        ${item.image
+          ? `<img src="${item.image}" alt="${item.title}" loading="lazy" onload="this.parentElement.classList.remove('loading');this.style.opacity=1" style="opacity:0">`
+          : ''}
+      </div>
+      <span class="card-rank">#${rank}</span>
+      <div class="card-body">
+        <h3 class="card-title">${item.title}</h3>
+        <div class="card-meta"><span>${item.tag}</span><span>•</span><span>TV</span></div>
+      </div>
+    `;
+    el.addEventListener('click', () => renderHero(item));
+    return el;
+  }
+
+  (async function init() {
+    const grid = document.getElementById('grid');
+    const results = await Promise.all(ANIME.map(a =>
+      fetchWikiSummary(a.title).then(info => ({ ...a, ...info })).catch(() => ({ ...a, image: '', extract: '' }))
+    ));
+    results.forEach((item, i) => grid.appendChild(renderCard(item, i + 1)));
+    renderHero(results[1] || results[0]); // Jujutsu featured
+  })();
 </script>
 </body>
 </html>
