@@ -130,6 +130,18 @@
       repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 10px);
   }
 
+  /* Frieren — twilight purple + gold */
+  [data-theme="frieren"] {
+    --primary: #9b5de5;
+    --accent: #f6c453;
+    --grad-hero: linear-gradient(135deg, #4a1d6e 0%, #f6c453 100%);
+    --grad-card: linear-gradient(180deg, rgba(155,93,229,0.10), rgba(0,0,0,0));
+    --pattern-a: radial-gradient(700px 380px at 0% 0%, rgba(155,93,229,0.35), transparent 60%);
+    --pattern-b: radial-gradient(600px 300px at 100% 0%, rgba(246,196,83,0.20), transparent 60%);
+    --motif:
+      radial-gradient(circle at 1px 1px, rgba(246,196,83,0.12) 1px, transparent 1.5px) 0 0/20px 20px;
+  }
+
   /* ===================== BASE ===================== */
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -148,8 +160,8 @@
   .app {
     min-height: 100vh;
     background-image: var(--pattern-a), var(--pattern-b), var(--motif);
-    background-attachment: fixed;
   }
+  @media (min-width: 861px) { .app { background-attachment: fixed; } }
 
   /* NAVBAR (reusable) */
   .nav {
@@ -159,6 +171,11 @@
     backdrop-filter: blur(10px);
     position: sticky; top: 0; z-index: 50;
     background: color-mix(in oklab, var(--bg) 70%, transparent);
+  }
+  .nav-inner {
+    display: flex; align-items: center; gap: var(--space-5);
+    width: 100%;
+    max-width: 1400px; margin: 0 auto;
   }
   .brand {
     font-family: var(--font-display);
@@ -194,6 +211,12 @@
   }
   .swatch:hover { transform: scale(1.1); }
   .swatch[aria-pressed="true"] { box-shadow: var(--glow); }
+  .swatch:focus-visible,
+  .card:focus-visible,
+  .btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 
   /* HERO (reusable) */
   .hero {
@@ -318,10 +341,15 @@
     position: relative;
     border-radius: var(--radius-md);
     overflow: hidden;
-    background: var(--bg-card);
+    background: transparent;
     border: 1px solid var(--surface-line);
     transition: transform var(--dur-med) var(--ease), box-shadow var(--dur-med);
     cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    width: 100%;
+    padding: 0;
   }
   .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
   .card-art {
@@ -330,21 +358,33 @@
     position: relative;
     overflow: hidden;
   }
+  .card-art::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: shimmer 1.4s var(--ease) infinite;
+    z-index: 0;
+  }
+  .card-art.is-loaded::before { display: none; }
   .card-art img {
     width: 100%; height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform var(--dur-med) var(--ease);
+    opacity: 0;
+    transition: opacity var(--dur-med), transform var(--dur-med) var(--ease);
+    position: relative; z-index: 1;
   }
+  .card-art.is-loaded img { opacity: 1; }
   .card:hover .card-art img { transform: scale(1.05); }
   .card-art::after {
     content: "";
     position: absolute; inset: 0;
     background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7));
     pointer-events: none;
+    z-index: 2;
   }
-  .card-art.loading img { opacity: 0; }
-  .card-art img { opacity: 1; transition: opacity var(--dur-med), transform var(--dur-med) var(--ease); }
+  @keyframes shimmer { to { transform: translateX(100%); } }
   .card-rank {
     position: absolute; top: var(--space-3); left: var(--space-3);
     background: var(--bg);
@@ -415,28 +455,31 @@
   <div class="app">
 
     <!-- NAVBAR -->
-    <nav class="nav">
-      <div class="brand">ANIZONE</div>
-      <div class="nav-links">
-        <a class="nav-link" href="#" aria-current="page">Home</a>
-        <a class="nav-link" href="#">Series</a>
-        <a class="nav-link" href="#">Movies</a>
-        <a class="nav-link" href="#">Schedule</a>
-        <a class="nav-link" href="#">My List</a>
-      </div>
-      <div class="theme-switcher" role="group" aria-label="Theme">
-        <button class="swatch" data-set="jujutsu"      aria-label="Jujutsu Kaisen" aria-pressed="true"></button>
-        <button class="swatch" data-set="demonslayer"  aria-label="Demon Slayer"  aria-pressed="false"></button>
-        <button class="swatch" data-set="onepiece"     aria-label="One Piece"     aria-pressed="false"></button>
-        <button class="swatch" data-set="spyfamily"    aria-label="Spy x Family"  aria-pressed="false"></button>
-        <button class="swatch" data-set="chainsaw"     aria-label="Chainsaw Man"  aria-pressed="false"></button>
+    <nav class="nav" aria-label="Primary">
+      <div class="nav-inner">
+        <div class="brand">ANIZONE</div>
+        <div class="nav-links">
+          <a class="nav-link" href="#" aria-current="page">Home</a>
+          <a class="nav-link" href="#">Series</a>
+          <a class="nav-link" href="#">Movies</a>
+          <a class="nav-link" href="#">Schedule</a>
+          <a class="nav-link" href="#">My List</a>
+        </div>
+        <div class="theme-switcher" role="group" aria-label="Theme">
+          <button class="swatch" data-set="jujutsu"      aria-label="Jujutsu Kaisen"></button>
+          <button class="swatch" data-set="demonslayer"  aria-label="Demon Slayer"></button>
+          <button class="swatch" data-set="onepiece"     aria-label="One Piece"></button>
+          <button class="swatch" data-set="spyfamily"    aria-label="Spy x Family"></button>
+          <button class="swatch" data-set="chainsaw"     aria-label="Chainsaw Man"></button>
+          <button class="swatch" data-set="frieren"      aria-label="Frieren"></button>
+        </div>
       </div>
     </nav>
 
     <!-- HERO -->
     <section class="hero">
       <div class="hero-card" id="hero-card">
-        <div class="hero-art" id="hero-art"></div>
+        <div class="hero-art" id="hero-art" aria-hidden="true"></div>
         <div class="hero-eyebrow" id="hero-eyebrow">FEATURED</div>
         <h1 class="hero-title" id="hero-title">Loading…</h1>
         <div class="hero-meta" id="hero-meta"></div>
@@ -446,36 +489,23 @@
         </div>
       </div>
 
-      <aside class="side-card">
-        <h3>Latest Episodes</h3>
-        <div class="episodes">
-          <div class="episode">
-            <div class="episode-num">12</div>
-            <div>
-              <div class="episode-title">To You, Someday</div>
-              <div class="episode-time">Sep 14 • 24m</div>
-            </div>
-            <button class="btn">Play</button>
-          </div>
-          <div class="episode">
-            <div class="episode-num">11</div>
-            <div>
-              <div class="episode-title">The Shibuya Incident</div>
-              <div class="episode-time">Sep 07 • 24m</div>
-            </div>
-            <button class="btn">Play</button>
-          </div>
-          <div class="episode">
-            <div class="episode-num">10</div>
-            <div>
-              <div class="episode-title">Black Flash</div>
-              <div class="episode-time">Aug 31 • 24m</div>
-            </div>
-            <button class="btn">Play</button>
-          </div>
+      <aside class="side-card" aria-labelledby="episodes-heading">
+        <h3 id="episodes-heading">Latest Episodes</h3>
+        <div class="episodes" id="episodes">
+          <noscript>
+            <p style="color:var(--text-muted);font-size:var(--text-sm)">
+              JavaScript is required to load episode data.
+            </p>
+          </noscript>
         </div>
       </aside>
     </section>
+
+    <noscript>
+      <p style="padding:var(--space-6);color:var(--text-muted)">
+        AniZone requires JavaScript to fetch anime data and images.
+      </p>
+    </noscript>
 
     <!-- TRENDING -->
     <section class="section">
@@ -487,7 +517,14 @@
         <a class="nav-link" href="#">View all →</a>
       </header>
 
-      <div class="grid" id="grid"></div>
+      <div class="grid" id="grid" aria-live="polite" aria-busy="true">
+        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
+        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
+        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
+        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
+        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
+        <div class="card" aria-hidden="true"><div class="card-art"></div><div class="card-body"><div class="card-title">&nbsp;</div><div class="card-meta">&nbsp;</div></div></div>
+      </div>
     </section>
 
     <footer class="footer">
@@ -497,90 +534,190 @@
 
 <script>
   /* =========================================================
-     DATA — Wikipedia REST API page titles
-     /page/summary/{title} returns thumbnail + extract.
-     The "thumbnail" is the lead image from the article,
-     which for anime articles is the official key visual.
+     DATA
+     Each entry links a Wikipedia page (its `originalimage` and
+     `thumbnail` are pulled; `originalimage` is the lead image,
+     which for anime articles is the official key visual).
+     `episodes` is illustrative metadata for the side panel.
      ========================================================= */
   const ANIME = [
-    { title: "Demon Slayer: Kimetsu no Yaiba",          theme: "demonslayer", tag: "Action" },
-    { title: "Jujutsu Kaisen",                          theme: "jujutsu",     tag: "Supernatural" },
-    { title: "One Piece",                               theme: "onepiece",    tag: "Adventure" },
-    { title: "Spy × Family",                            theme: "spyfamily",   tag: "Comedy" },
-    { title: "Chainsaw Man",                            theme: "chainsaw",    tag: "Action" },
-    { title: "Frieren: Beyond Journey's End",          theme: "spyfamily",   tag: "Fantasy" }
+    { title: "Jujutsu Kaisen",                  theme: "jujutsu",     tag: "Supernatural", episodes: [
+      { n: 12, t: "To You, Someday",       d: "Sep 14 • 24m" },
+      { n: 11, t: "The Shibuya Incident",  d: "Sep 07 • 24m" },
+      { n: 10, t: "Black Flash",           d: "Aug 31 • 24m" }
+    ]},
+    { title: "Demon Slayer: Kimetsu no Yaiba",  theme: "demonslayer", tag: "Action",       episodes: [
+      { n: 11, t: "A Connected Bond",      d: "Jun 30 • 24m" },
+      { n: 10, t: "Never Give Up",         d: "Jun 23 • 24m" },
+      { n:  9, t: "Butterfly Estate",      d: "Jun 16 • 24m" }
+    ]},
+    { title: "One Piece",                       theme: "onepiece",    tag: "Adventure",    episodes: [
+      { n: 1122, t: "A Break in the Storm", d: "Sep 01 • 24m" },
+      { n: 1121, t: "Luffy vs. Admiral",    d: "Aug 25 • 24m" },
+      { n: 1120, t: "Egghead Arc",          d: "Aug 18 • 24m" }
+    ]},
+    { title: "Spy × Family",                    theme: "spyfamily",   tag: "Comedy",       episodes: [
+      { n: 25, t: "Mission 75",            d: "Jun 24 • 24m" },
+      { n: 24, t: "Mission 74",            d: "Jun 17 • 24m" },
+      { n: 23, t: "Mission 73",            d: "Jun 10 • 24m" }
+    ]},
+    { title: "Chainsaw Man",                    theme: "chainsaw",    tag: "Action",       episodes: [
+      { n: 12, t: "Katana vs. Chainsaw",   d: "Dec 28 • 24m" },
+      { n: 11, t: "Go Get 'Em, Chainsaw Man", d: "Dec 21 • 24m" },
+      { n: 10, t: "Humanity's Savior",     d: "Dec 14 • 24m" }
+    ]},
+    { title: "Frieren: Beyond Journey's End",  theme: "frieren",     tag: "Fantasy",      episodes: [
+      { n: 28, t: "The Journey to Ende",   d: "Mar 22 • 24m" },
+      { n: 27, t: "A Frieren Reunion",     d: "Mar 15 • 24m" },
+      { n: 26, t: "The Exam's End",        d: "Mar 08 • 24m" }
+    ]}
   ];
 
-  // THEME SWITCHER
+  /* ---- Theme switcher ---- */
   const swatches = document.querySelectorAll('.swatch');
   const root = document.body;
-  swatches.forEach(btn => {
-    btn.addEventListener('click', () => {
-      root.setAttribute('data-theme', btn.dataset.set);
-      swatches.forEach(s => s.setAttribute('aria-pressed', String(s === btn)));
-    });
-  });
-
-  /* Fetch a Wikipedia summary; resolve to {title, image, extract}. */
-  async function fetchWikiSummary(title) {
-    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
-    const res = await fetch(url, { headers: { 'Api-User-Agent': 'AniZone/1.0' } });
-    if (!res.ok) throw new Error(`Wiki ${res.status}`);
-    const data = await res.json();
-    return {
-      title: data.title,
-      image: (data.originalimage && data.originalimage.source) || (data.thumbnail && data.thumbnail.source) || '',
-      extract: data.extract || ''
-    };
-  }
 
   function setTheme(theme) {
     root.setAttribute('data-theme', theme);
-    swatches.forEach(s => s.setAttribute('aria-pressed', s.dataset.set === theme));
+    swatches.forEach(s => s.setAttribute('aria-pressed', String(s.dataset.set === theme)));
+  }
+  setTheme('jujutsu');
+
+  swatches.forEach(btn => {
+    btn.addEventListener('click', () => setTheme(btn.dataset.set));
+  });
+
+  /* ---- Wikipedia fetch with stagger to avoid rate-limits ---- */
+  async function fetchWikiSummary(title) {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+    const res = await fetch(url, { headers: { 'Api-User-Agent': 'AniZone/1.0 (https://github.com/Nubby29/Android_WebApps)' } });
+    if (!res.ok) throw new Error(`Wiki ${res.status}`);
+    const d = await res.json();
+    return {
+      title: d.title,
+      original: d.originalimage && d.originalimage.source,
+      thumb: d.thumbnail && d.thumbnail.source
+    };
   }
 
+  /* Map API image to {src, w, h} using a 3:4 aspect for cards. */
+  function thumbWithDims(url) {
+    if (!url) return null;
+    return { src: url, w: 300, h: 400 };
+  }
+  function heroWithDims(url) {
+    if (!url) return null;
+    return { src: url, w: 1200, h: 800 };
+  }
+
+  /* ---- Render: episodes ---- */
+  function renderEpisodes(episodes) {
+    const list = document.getElementById('episodes');
+    list.innerHTML = '';
+    episodes.forEach(ep => {
+      const row = document.createElement('div');
+      row.className = 'episode';
+      row.innerHTML = `
+        <div class="episode-num">${ep.n}</div>
+        <div>
+          <div class="episode-title"></div>
+          <div class="episode-time"></div>
+        </div>
+        <button class="btn">Play</button>`;
+      row.querySelector('.episode-title').textContent = ep.t;
+      row.querySelector('.episode-time').textContent = ep.d;
+      list.appendChild(row);
+    });
+  }
+
+  /* ---- Render: hero ---- */
   function renderHero(item) {
     setTheme(item.theme);
     const art = document.getElementById('hero-art');
-    art.style.background = ''; // let image show
-    art.innerHTML = item.image
-      ? `<img src="${item.image}" alt="${item.title}" loading="eager" onload="this.style.opacity=1" style="opacity:0">`
-      : '';
+    const img = heroWithDims(item.original) || heroWithDims(item.thumb);
+    if (img) {
+      art.innerHTML = `<img src="${img.src}" width="${img.w}" height="${img.h}" alt="">`;
+    } else {
+      art.innerHTML = '';
+    }
+    const title = document.getElementById('hero-title');
+    title.textContent = item.title;
     document.getElementById('hero-eyebrow').textContent = 'FEATURED';
-    document.getElementById('hero-title').innerHTML = item.title;
     const meta = document.getElementById('hero-meta');
-    meta.innerHTML =
-      `<span class="badge"><span class="dot"></span>Trending</span>` +
-      `<span class="badge">${item.tag}</span>` +
-      `<span class="badge">Wikipedia • Official</span>`;
+    meta.innerHTML = '';
+    const tags = [
+      { html: '<span class="badge"><span class="dot"></span>Trending</span>' },
+      { text: item.tag },
+      { text: 'Lead image' }
+    ];
+    tags.forEach(t => {
+      const b = document.createElement('span');
+      b.className = 'badge';
+      if (t.html) b.innerHTML = t.html;
+      else b.textContent = t.text;
+      meta.appendChild(b);
+    });
+    renderEpisodes(item.episodes);
   }
 
+  /* ---- Render: card (accessible <button>) ---- */
   function renderCard(item, rank) {
-    const el = document.createElement('article');
-    el.className = 'card';
-    el.innerHTML = `
-      <div class="card-art loading">
-        ${item.image
-          ? `<img src="${item.image}" alt="${item.title}" loading="lazy" onload="this.parentElement.classList.remove('loading');this.style.opacity=1" style="opacity:0">`
-          : ''}
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'card';
+    btn.setAttribute('aria-label', `Feature ${item.title}`);
+
+    const img = thumbWithDims(item.thumb) || thumbWithDims(item.original);
+    btn.innerHTML = `
+      <div class="card-art" data-rank="${rank}">
+        ${img ? `<img src="${img.src}" width="${img.w}" height="${img.h}" alt="" loading="lazy" decoding="async">` : ''}
       </div>
-      <span class="card-rank">#${rank}</span>
+      <span class="card-rank" aria-hidden="true">Top ${rank}</span>
       <div class="card-body">
-        <h3 class="card-title">${item.title}</h3>
-        <div class="card-meta"><span>${item.tag}</span><span>•</span><span>TV</span></div>
-      </div>
-    `;
-    el.addEventListener('click', () => renderHero(item));
-    return el;
+        <h3 class="card-title"></h3>
+        <div class="card-meta"></div>
+      </div>`;
+    btn.querySelector('.card-title').textContent = item.title;
+    btn.querySelector('.card-meta').innerHTML =
+      `<span>${item.tag}</span><span>•</span><span>TV</span>`;
+
+    if (img) {
+      const realImg = btn.querySelector('img');
+      realImg.addEventListener('load', () => {
+        realImg.parentElement.classList.add('is-loaded');
+      });
+      realImg.addEventListener('error', () => {
+        realImg.parentElement.classList.add('is-loaded');
+      });
+    } else {
+      btn.querySelector('.card-art').classList.add('is-loaded');
+    }
+
+    btn.addEventListener('click', () => renderHero(item));
+    return btn;
   }
 
+  /* ---- Init: staggered fetches ---- */
   (async function init() {
     const grid = document.getElementById('grid');
-    const results = await Promise.all(ANIME.map(a =>
-      fetchWikiSummary(a.title).then(info => ({ ...a, ...info })).catch(() => ({ ...a, image: '', extract: '' }))
-    ));
+    grid.innerHTML = '';
+    grid.setAttribute('aria-busy', 'true');
+
+    // Stagger requests ~150ms apart to stay friendly to Wikipedia's rate limit.
+    const results = [];
+    for (const a of ANIME) {
+      try {
+        const info = await fetchWikiSummary(a.title);
+        results.push({ ...a, ...info });
+      } catch {
+        results.push({ ...a, original: '', thumb: '' });
+      }
+      await new Promise(r => setTimeout(r, 150));
+    }
+
     results.forEach((item, i) => grid.appendChild(renderCard(item, i + 1)));
-    renderHero(results[1] || results[0]); // Jujutsu featured
+    grid.setAttribute('aria-busy', 'false');
+    renderHero(results[0]); // Jujutsu featured
   })();
 </script>
 </body>
