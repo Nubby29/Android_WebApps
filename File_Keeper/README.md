@@ -245,9 +245,22 @@ npm run build        # outputs ./dist
 ```
 
 ### Deploy the PWA
-Pushes to `main` automatically deploy to GitHub Pages via `.github/workflows/deploy-pwa.yml`.
+Two options — pick one:
 
-Live URL: `https://nubby29.github.io/Android_WebApps/File_Keeper/`
+**Option A — Cloudflare Pages (recommended)**
+1. Sign up at https://dash.cloudflare.com (free).
+2. **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → pick `Nubby29/Android_WebApps`.
+3. **Project name:** `file-keeper` (this gives you `https://file-keeper.pages.dev`).
+4. **Build settings:** leave defaults. The committed `wrangler.toml` at the repo root tells Cloudflare what to run.
+5. **Environment variables:** add `VITE_BASE=/`.
+6. **Save and Deploy.** Future pushes to `main` auto-deploy.
+
+No GitHub Actions, no billing.
+
+**Option B — GitHub Pages** (only if your account is in good standing)
+A `Deploy PWA to GitHub Pages` workflow is also committed. Enable Pages (Source: GitHub Actions) in repo settings, then trigger it from the Actions tab.
+
+Live URL (Cloudflare): `https://file-keeper.pages.dev`
 
 ### Build an installable Android APK (TWA)
 
@@ -264,13 +277,13 @@ The deployed PWA is wrapped into a real Android app using [Bubblewrap](https://g
    ```
 3. **Initialize the project** (uses the committed `twa-manifest.json`)
    ```bash
-   bubblewrap init --manifest=https://nubby29.github.io/Android_WebApps/File_Keeper/manifest.webmanifest
+   bubblewrap init --manifest=https://file-keeper.pages.dev/manifest.webmanifest
    ```
    Bubblewrap will print the SHA-256 fingerprint of your signing key. Copy it.
 4. **Update the Digital Asset Links file** with that fingerprint:
    `File_Keeper/public/.well-known/assetlinks.json` — replace
    `REPLACE_WITH_SHA256_OF_YOUR_ANDROID_SIGNING_KEY` with the fingerprint.
-   Commit and push so it deploys.
+   Commit and push so it redeploys.
 5. **Build the APK**
    ```bash
    bubblewrap build
@@ -283,7 +296,7 @@ The deployed PWA is wrapped into a real Android app using [Bubblewrap](https://g
    Or transfer the APK to the phone and tap to install (enable "Install unknown apps" for your file manager).
 
 ### Notes
-- TWA verification requires the assetlinks file to be served at the **site root**: `https://nubby29.github.io/Android_WebApps/.well-known/assetlinks.json`. The post-build script copies it there automatically.
+- TWA verification requires the assetlinks file to be served at the **site root**: `https://file-keeper.pages.dev/.well-known/assetlinks.json`. The post-build script copies it there automatically.
 - For Play Store distribution, run `bubblewrap build --mode=release` and upload the resulting AAB.
 
 ---
@@ -316,4 +329,4 @@ The deployed PWA is wrapped into a real Android app using [Bubblewrap](https://g
 - Project initiated: 2026-09-04
 - Current Phase: Phase 2 - Core UI Components
 - Last Updated: 2026-09-04
-- Deployed PWA: https://nubby29.github.io/Android_WebApps/File_Keeper/
+- Deployed PWA: https://file-keeper.pages.dev

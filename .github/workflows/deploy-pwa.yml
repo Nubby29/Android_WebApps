@@ -1,24 +1,21 @@
-name: Deploy PWA to GitHub Pages
+name: Deploy to Cloudflare Pages
+
+# Direct-upload deploy using wrangler. Use this if you connected the repo
+# directly to Cloudflare Pages (which builds on Cloudflare's side and does
+# NOT need this workflow). This workflow is the alternative: it builds
+# locally and uploads the dist/ artifact via the Cloudflare API.
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -37,23 +34,13 @@ jobs:
         working-directory: File_Keeper
         run: npm run build
         env:
-          VITE_BASE: /Android_WebApps/File_Keeper/
+          VITE_BASE: /
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
-          path: File_Keeper/dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: file-keeper
+          directory: File_Keeper/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
