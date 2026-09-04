@@ -6,7 +6,8 @@
   "description": "File Keeper - Document Management Android WebApp (PWA)",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/copy-assetlinks.mjs",
+    "icons": "node scripts/generate-icons.mjs",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest"
@@ -24,6 +25,7 @@
     "eslint-plugin-react": "^7.36.1",
     "eslint-plugin-react-hooks": "^5.0.0-canary-7118f5dd7-20240703",
     "eslint-plugin-react-refresh": "^0.4.12",
+    "sharp": "^0.35.4",
     "vite": "^5.4.6",
     "vite-plugin-pwa": "^0.20.5",
     "vitest": "^2.1.1"

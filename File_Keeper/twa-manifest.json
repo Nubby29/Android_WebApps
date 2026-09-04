@@ -1,0 +1,28 @@
+{
+  "packageId": "com.nubby29.filekeeper",
+  "host": "nubby29.github.io",
+  "name": "File Keeper",
+  "launcherName": "File Keeper",
+  "display": "standalone",
+  "themeColor": "#1f6feb",
+  "backgroundColor": "#0d1117",
+  "startUrl": "/Android_WebApps/File_Keeper/",
+  "iconUrl": "https://nubby29.github.io/Android_WebApps/File_Keeper/pwa-512x512.png",
+  "maskableIconUrl": "https://nubby29.github.io/Android_WebApps/File_Keeper/pwa-512x512-maskable.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersion": "1",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://nubby29.github.io/Android_WebApps/File_Keeper/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "orientation": "portrait",
+  "enableNotifications": false,
+  "features": {},
+  "minSdkVersion": 23,
+  "targetSdkVersion": 34
+}

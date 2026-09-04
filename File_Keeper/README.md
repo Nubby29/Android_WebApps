@@ -231,28 +231,60 @@ File_Keeper/
 ## 📞 Getting Started
 
 ### Prerequisites
-- - Android Studio / IDE
-- - Node.js / Python (depending on stack)
+- - Node.js 20+
 - - Git
-- - Android SDK
+- - (For APK build) JDK 17, Android SDK, [Bubblewrap CLI](https://github.com/GoogleChromeLabs/bubblewrap)
 
-### Installation
+### Run as PWA (web)
 ```bash
-# Clone repository
-git clone <repository-url>
-
-# Navigate to project
-cd File_Keeper
-
-# Install dependencies
-npm install  # or appropriate package manager
-
-# Setup environment
-cp .env.example .env
-
-# Build and run
-npm start  # or appropriate build command
+git clone https://github.com/Nubby29/Android_WebApps.git
+cd Android_WebApps/File_Keeper
+npm install
+npm run dev          # http://localhost:5173
+npm run build        # outputs ./dist
 ```
+
+### Deploy the PWA
+Pushes to `main` automatically deploy to GitHub Pages via `.github/workflows/deploy-pwa.yml`.
+
+Live URL: `https://nubby29.github.io/Android_WebApps/File_Keeper/`
+
+### Build an installable Android APK (TWA)
+
+The deployed PWA is wrapped into a real Android app using [Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap) (Trusted Web Activity).
+
+1. **Install Bubblewrap**
+   ```bash
+   npm i -g @bubblewrap/cli
+   ```
+2. **Generate a signing key** (skip if you already have one)
+   ```bash
+   keytool -genkey -v -keystore android.keystore -alias android \
+     -keyalg RSA -keysize 2048 -validity 10000
+   ```
+3. **Initialize the project** (uses the committed `twa-manifest.json`)
+   ```bash
+   bubblewrap init --manifest=https://nubby29.github.io/Android_WebApps/File_Keeper/manifest.webmanifest
+   ```
+   Bubblewrap will print the SHA-256 fingerprint of your signing key. Copy it.
+4. **Update the Digital Asset Links file** with that fingerprint:
+   `File_Keeper/public/.well-known/assetlinks.json` — replace
+   `REPLACE_WITH_SHA256_OF_YOUR_ANDROID_SIGNING_KEY` with the fingerprint.
+   Commit and push so it deploys.
+5. **Build the APK**
+   ```bash
+   bubblewrap build
+   # -> app-release-signed.apk in the project root
+   ```
+6. **Install on your phone**
+   ```bash
+   adb install app-release-signed.apk
+   ```
+   Or transfer the APK to the phone and tap to install (enable "Install unknown apps" for your file manager).
+
+### Notes
+- TWA verification requires the assetlinks file to be served at the **site root**: `https://nubby29.github.io/Android_WebApps/.well-known/assetlinks.json`. The post-build script copies it there automatically.
+- For Play Store distribution, run `bubblewrap build --mode=release` and upload the resulting AAB.
 
 ---
 
@@ -282,5 +314,6 @@ npm start  # or appropriate build command
 ## 📝 Notes & Updates
 
 - Project initiated: 2026-09-04
-- Current Phase: Phase 1 - Project Setup
+- Current Phase: Phase 2 - Core UI Components
 - Last Updated: 2026-09-04
+- Deployed PWA: https://nubby29.github.io/Android_WebApps/File_Keeper/
