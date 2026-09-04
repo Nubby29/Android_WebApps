@@ -1,0 +1,21 @@
+{
+  "app": {
+    "name": "File Keeper",
+    "version": "0.1.0",
+    "defaultLocale": "en"
+  },
+  "storage": {
+    "provider": "indexeddb",
+    "imageMaxDimension": 2048,
+    "thumbnailSize": 256
+  },
+  "ocr": {
+    "provider": "tesseract",
+    "language": "eng",
+    "timeoutMs": 15000
+  },
+  "ml": {
+    "provider": "mlkit",
+    "confidenceThreshold": 0.7
+  }
+}
