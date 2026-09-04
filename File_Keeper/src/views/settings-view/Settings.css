@@ -1,0 +1,18 @@
+.settings { display: flex; flex-direction: column; gap: 16px; }
+.settings-section {
+  padding: 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+}
+.settings-section h3 { margin: 0 0 6px; font-size: 0.95rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.storage-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.storage-stats .stat { text-align: center; padding: 12px 8px; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; }
+.storage-stats .stat-value { font-size: 1.1rem; font-weight: 700; }
+.storage-stats .stat-label { font-size: 0.7rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+.about-list { margin: 0 0 12px; display: flex; flex-direction: column; gap: 4px; }
+.about-list div { display: flex; gap: 8px; font-size: 0.9rem; }
+.about-list dt { color: #8b949e; min-width: 80px; }
+.about-list dd { margin: 0; }

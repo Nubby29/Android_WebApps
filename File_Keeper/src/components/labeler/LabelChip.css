@@ -1,0 +1,32 @@
+.label-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #1f2937;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+.label-chip.active {
+  background: #1f6feb;
+  border-color: #1f6feb;
+  color: #fff;
+}
+.label-chip.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+.label-chip-remove {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 2px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.label-chip-remove:hover { opacity: 1; }
